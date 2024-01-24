@@ -1,0 +1,20 @@
+server:
+  port: 9010
+
+spring:
+  application:
+    name: "message"
+  cloud:
+    function:
+      definition: email|sms # To compose both these functions into single one, So the REST endpoint '/emailsms' will be exposed, email executed fisrt and then sms
+    stream:
+      bindings:
+        emailsms-in-0: # binding name: emailsms, input binding
+          destination: send-communication # look this queue to take the inputs(messages) from
+          group: ${spring.application.name} # append .message to the queue name
+        emailsms-out-0:
+          destination: communication-sent #exchange name. When -out its exchange, when it is -in it's the queue name
+      kafka:
+        binder:
+          brokers:
+            - localhost:9092
